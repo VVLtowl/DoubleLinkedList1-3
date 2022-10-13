@@ -96,8 +96,8 @@ typename DoubleLinkedList<DataType>::ConstIterator& DoubleLinkedList<DataType>::
 template <typename DataType>
 typename const DataType& DoubleLinkedList<DataType>::ConstIterator::operator*() const
 {
-	assert(m_pNode && m_pList && "constIterator: no reference");// リストの参照があるかの確認
-	assert(m_pNode != m_pList->m_pDummy && "constIterator: is dummy");
+	assert(m_pNode && m_pList && "constIterator: no reference");//リストの参照があるかの確認
+	assert(m_pNode != m_pList->m_pDummy && "constIterator: is dummy");//ダミーではないかの確認
 
 	return (*m_pNode).data;
 }
@@ -120,8 +120,8 @@ bool DoubleLinkedList<DataType>::ConstIterator::operator!=(const ConstIterator& 
 template <typename DataType>
 DataType& DoubleLinkedList<DataType>::Iterator::operator*()
 {
-	assert(m_pNode && m_pList && "iterator: no reference");// リストの参照があるかの確認
-	assert(m_pNode != m_pList->m_pDummy && "iterator: is dummy");
+	assert(m_pNode && m_pList && "iterator: no reference");//リストの参照があるかの確認
+	assert(m_pNode != m_pList->m_pDummy && "iterator: is dummy");//ダミーではないかの確認
 
 	return (*m_pNode).data;
 }
