@@ -10,9 +10,10 @@
 //イテレータの単体テスト
 #define GT_AUTO_TEST_ITERATOR
 
-#if defined GT_AUTO_TEST_ITERATOR
 namespace ex02_ConstIterator
 {
+#if defined GT_AUTO_TEST_ITERATOR
+
 #pragma region ========== イテレータの指す要素を取得 ==========
 
 	using IteratorGetDataTest_F = ListFixture;
@@ -517,5 +518,6 @@ namespace ex02_ConstIterator
 		EXPECT_TRUE(iter1 != iter2);
 	}
 #pragma endregion
-}
+
 #endif
+}
