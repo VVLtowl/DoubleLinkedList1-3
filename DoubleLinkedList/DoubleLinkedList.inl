@@ -2,7 +2,6 @@
 * @brief	双方向リストの詳細定義
 * @date		2022/10/11
 ********************************************************/
-#define _CRT_SECURE_NO_WARNINGS
 #include <assert.h>
 #include "DoubleLinkedList.h"
 
@@ -16,19 +15,6 @@ bool DoubleLinkedList<DataType>::ConstIterator::IsVaild(const DoubleLinkedList* 
 	bool sameList = (m_pList == list);//同じリストであるか
 
 	return hasReference && sameList;
-}
-
-template<typename DataType>
-inline bool DoubleLinkedList<DataType>::ConstIterator::IsDummy()
-{
-	//リスト参照がない場合、ダミーではないと判断
-	if (m_pNode == nullptr || m_pList == nullptr)
-	{
-		return false;
-	}
-
-	//指しているノードはダミーであるかと判断
-	return m_pList->m_pDummy == m_pNode;
 }
 
 template <typename DataType>
@@ -61,9 +47,10 @@ typename DoubleLinkedList<DataType>::ConstIterator DoubleLinkedList<DataType>::C
 	assert(m_pList->Count() > 0 && "post decrement: list is empty");//リストが空ではないかの確認
 	assert(m_pNode->pPrev != m_pList->m_pDummy && "post decrement: begin cant decrement");// 先頭ノードではないかの確認
 
+	ConstIterator iter(*this);//運算前のイテレータをコピー
 	m_pNode = m_pNode->pPrev;
 
-	return (*this);
+	return iter;
 }
 
 template <typename DataType>
@@ -72,9 +59,10 @@ typename DoubleLinkedList<DataType>::ConstIterator DoubleLinkedList<DataType>::C
 	assert(m_pNode && m_pList && "post increment: no reference");// リストの参照があるかの確認
 	assert(m_pNode != m_pList->m_pDummy && "post increment: dummy cant increment");// ダミーではないかの確認
 
+	ConstIterator iter(*this);//運算前のイテレータをコピー
 	m_pNode = m_pNode->pNext;
 
-	return (*this);
+	return iter;
 }
 
 template <typename DataType>
@@ -133,7 +121,7 @@ template <typename DataType>
 DoubleLinkedList<DataType>::~DoubleLinkedList()
 {
 	//空の場合何もしない
-	if (Count() == 0)return;
+	if (m_Count == 0)return;
 
 	//先頭から、末尾までノードを削除
 	Node* del = m_pDummy->pNext;//先頭ノード取得
@@ -160,6 +148,7 @@ DoubleLinkedList<DataType>::~DoubleLinkedList()
 template <typename DataType>
 DoubleLinkedList<DataType>::DoubleLinkedList()
 {
+	m_Count = 0;
 	m_pDummy = new Node;
 	m_pDummy->pPrev = m_pDummy;
 	m_pDummy->pNext = m_pDummy;
@@ -174,15 +163,18 @@ bool DoubleLinkedList<DataType>::Insert(ConstIterator& positionIter, const DataT
 
 	//イテレータ有効であるかの確認
 	if (positionIter.IsVaild(this) == false)
+	{
 		return false;
+	}
 
 	//挿入を行う
-	Node* prev = positionIter.GetNode()->pPrev;
-	Node* next = positionIter.GetNode();
+	Node* prev = positionIter.m_pNode->pPrev;
+	Node* next = positionIter.m_pNode;
 	prev->pNext = newNode;
 	newNode->pPrev = prev;
 	newNode->pNext = next;
 	next->pPrev = newNode;
+	m_Count++;
 	return true;
 }
 
@@ -202,31 +194,23 @@ bool DoubleLinkedList<DataType>::Remove(ConstIterator& positionIter)
 	}
 
 	//ダミーノードを指す場合、削除失敗
-	if (positionIter.IsDummy() == true)
+	if (positionIter.m_pNode == m_pDummy)
 	{
 		return false;
 	}
 
 	//削除を行う
-	Node* prev = positionIter.GetNode()->pPrev;
-	Node* next = positionIter.GetNode()->pNext;
+	Node* prev = positionIter.m_pNode->pPrev;
+	Node* next = positionIter.m_pNode->pNext;
 	prev->pNext = next;
 	next->pPrev = prev;
+	m_Count--;
 	return true;
 }
 
 template <typename DataType>
 typename DoubleLinkedList<DataType>::Iterator DoubleLinkedList<DataType>::Begin()
 {
-	//リストが空である場合
-	if (Count() == 0)
-	{
-		Iterator iter;
-		iter.m_pNode = m_pDummy;
-		iter.m_pList = this;
-		return iter;
-	}
-
 	Iterator iter;
 	iter.m_pNode = m_pDummy->pNext;
 	iter.m_pList = this;
@@ -245,35 +229,12 @@ typename DoubleLinkedList<DataType>::Iterator DoubleLinkedList<DataType>::End()
 template <typename DataType>
 int DoubleLinkedList<DataType>::Count() const
 {
-	//先頭要素がない場合、0を返す
-	if (m_pDummy->pNext == nullptr)
-	{
-		return 0;
-	}
-
-	//データ数計算
-	int count = 0;
-	Node* node = m_pDummy->pNext;//先頭要素へのポインタを取得
-	while (node != m_pDummy)
-	{
-		count++;
-		node = node->pNext;
-	}
-	return count;
+	return m_Count;
 }
 
 template <typename DataType>
 typename DoubleLinkedList<DataType>::ConstIterator DoubleLinkedList<DataType>::CBegin() const
 {
-	//リストが空である場合、ダミーイテレータを返す
-	if (Count() == 0)
-	{
-		ConstIterator constIter;
-		constIter.m_pNode = m_pDummy;
-		constIter.m_pList = this;
-		return constIter;
-	}
-
 	ConstIterator constIter;
 	constIter.m_pNode = m_pDummy->pNext;
 	constIter.m_pList = this;

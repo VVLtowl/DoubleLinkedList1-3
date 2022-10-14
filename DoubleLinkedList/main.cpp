@@ -10,6 +10,10 @@
 #include "ScoreData.h"
 #include "DoubleLinkedList.h"
 
+/*********************************************************
+* @brief		main関数
+* @return		成功の場合0を返す、失敗の場合ほかの値を返す
+********************************************************/
 int main(void)
 {
 	//データを格納するためのリストを用意
@@ -37,10 +41,10 @@ int main(void)
 		//内容が取らない場合ループ終了
 		{
 			int score;					//スコアデータを一時格納用
-			char name[WORD_SIZE];		//名前データを一時格納用
+			char name[50];		//名前データを一時格納用
 
 			while (fscanf(fp, "%d\t%s", &score, name) != EOF) {
-#if 1
+#if 0
 				//1行ずつ読み取った内容を確認
 				std::cout << name << ":" << score << std::endl;//test
 #endif
@@ -52,7 +56,6 @@ int main(void)
 			}
 		}
 		
-
 		//ファイルを閉じる
 		fclose(fp);
 	}
@@ -61,7 +64,6 @@ int main(void)
 	{
 		auto it = list.Begin();
 		auto end = list.End();
-
 		for (; it != end; ++it)
 		{
 			std::cout 

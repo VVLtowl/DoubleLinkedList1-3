@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="AutoTest_DoubleLinkedList.cpp">
+      <Filter>AutoTest</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoTest_ConstIterator.cpp">
+      <Filter>AutoTest</Filter>
+    </ClCompile>
+    <ClCompile Include="ManualTest_ConstIterator.cpp">
+      <Filter>ManualTest</Filter>
+    </ClCompile>
+    <ClCompile Include="ManualTest_DoubleLinkedList.cpp">
+      <Filter>ManualTest</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\DoubleLinkedList\ScoreData.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="TestTool.h" />
+    <ClInclude Include="ManualTest_ConstIterator.h">
+      <Filter>ManualTest</Filter>
+    </ClInclude>
+    <ClInclude Include="ManualTest_DoubleLinkedList.h">
+      <Filter>ManualTest</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ManualTest">
+      <UniqueIdentifier>{80364885-c648-4dec-9def-4c0b53b3e9eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AutoTest">
+      <UniqueIdentifier>{0e6049a1-9756-4439-8db7-ac71ddc015bc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

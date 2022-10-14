@@ -90,12 +90,6 @@ protected:
 		end = list.End();
 		list.Insert(end, data);
 
-		//テスト用イテレータの準備
-		headIter = list.Begin();
-		middleIter = list.Begin(); ++middleIter;
-		tailIter = list.End(); --tailIter;
-		endIter = list.End();
-
 		UpdateIterator();
 	}
 

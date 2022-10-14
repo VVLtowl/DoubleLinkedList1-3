@@ -34,18 +34,22 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClInclude Include="..\DoubleLinkedList\ScoreData.h" />
+    <ClInclude Include="ManualTest_ConstIterator.h" />
+    <ClInclude Include="ManualTest_DoubleLinkedList.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestTool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ManualTest_ConstIterator.cpp" />
+    <ClCompile Include="ManualTest_DoubleLinkedList.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Test_ConstIterator.cpp" />
-    <ClCompile Include="Test_DoubleLinkedList.cpp" />
+    <ClCompile Include="AutoTest_ConstIterator.cpp" />
+    <ClCompile Include="AutoTest_DoubleLinkedList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
