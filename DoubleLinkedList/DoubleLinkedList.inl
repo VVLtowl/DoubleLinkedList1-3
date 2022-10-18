@@ -204,6 +204,8 @@ bool DoubleLinkedList<DataType>::Remove(ConstIterator& positionIter)
 	Node* next = positionIter.m_pNode->pNext;
 	prev->pNext = next;
 	next->pPrev = prev;
+
+	delete positionIter.m_pNode;
 	m_Count--;
 	return true;
 }

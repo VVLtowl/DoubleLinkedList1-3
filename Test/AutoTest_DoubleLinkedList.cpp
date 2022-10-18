@@ -7,11 +7,9 @@
 #include "../DoubleLinkedList/ScoreData.h"
 #include "TestTool.h"
 
+
 //双方向リストの単体テスト
 #define GT_AUTO_TEST_LIST
-
-//双方向リストの手動テスト
-//#define GT_MANUAL_TEST_LIST
 
 namespace ex01_DoubleLinkedList
 {
@@ -28,9 +26,8 @@ namespace ex01_DoubleLinkedList
 	*				データ数の取得関数の戻り値を確認します。
 	*				戻り値が0の場合成功です。
 	********************************************************/
-	TEST(ListCountTest, WhenEmptyList)
+	TEST_F(ListCountTest_F, WhenEmptyList)
 	{
-		DoubleLinkedList<ScoreData> list;
 		EXPECT_EQ(0, list.Count());
 	}
 
@@ -41,10 +38,8 @@ namespace ex01_DoubleLinkedList
 	*				データ数の取得関数の戻り値を確認します。
 	*				戻り値が1の場合成功です。
 	********************************************************/
-	TEST(ListCountTest, WhenInsertToEndSucceed)
+	TEST_F(ListCountTest_F, WhenInsertToEndSucceed)
 	{
-		DoubleLinkedList<ScoreData> list;
-
 		//末尾への挿入を成功させる
 		auto iter = list.End();
 		ScoreData data(10, "element0");
@@ -60,15 +55,13 @@ namespace ex01_DoubleLinkedList
 	*				データ数の取得関数の戻り値を確認します。
 	*				戻り値が0の場合成功です。
 	********************************************************/
-	TEST(ListCountTest, WhenInsertToEndFailed)
+	TEST_F(ListCountTest_F, WhenInsertToEndFailed)
 	{
-		DoubleLinkedList<ScoreData> list;
-		DoubleLinkedList<ScoreData> otherList;
-
 		//末尾への挿入を失敗させる
-		auto iter = otherList.End();//別リストのイテレータで失敗を起こす
+		DoubleLinkedList<ScoreData> wrongList;//別リストで失敗を起こす
+		auto wrongIter = wrongList.End();
 		ScoreData data;
-		EXPECT_FALSE(list.Insert(iter, data));
+		EXPECT_FALSE(list.Insert(wrongIter, data));
 
 		EXPECT_EQ(0, list.Count());
 	}
@@ -102,12 +95,12 @@ namespace ex01_DoubleLinkedList
 	TEST(ListCountTest, WhenInsertFailed)
 	{
 		DoubleLinkedList<ScoreData> list;
-		DoubleLinkedList<ScoreData> otherList;
 
 		//挿入を失敗させる
-		auto iter = otherList.Begin();//別リストのイテレータで失敗を起こす
+		DoubleLinkedList<ScoreData> wrongList;//別リストで失敗を起こす
+		auto wrongIter = wrongList.End();
 		ScoreData data;
-		EXPECT_FALSE(list.Insert(iter, data));
+		EXPECT_FALSE(list.Insert(wrongIter, data));
 
 		EXPECT_EQ(0, list.Count());
 	}
@@ -142,7 +135,7 @@ namespace ex01_DoubleLinkedList
 		InputOneData();
 
 		//無効なイテレータから、削除を失敗させる
-		DoubleLinkedList<ScoreData>::Iterator iter;
+		DoubleLinkedList<ScoreData>::Iterator iter;//参照のないイテレータで失敗を起こす
 		EXPECT_FALSE(list.Remove(iter));
 
 		EXPECT_EQ(1, list.Count());
@@ -164,7 +157,6 @@ namespace ex01_DoubleLinkedList
 
 		EXPECT_EQ(0, list.Count());
 	}
-
 #pragma endregion
 
 #pragma region ========== データの挿入 ==========
@@ -182,16 +174,34 @@ namespace ex01_DoubleLinkedList
 	TEST(ListInsertTest, WhenEmptyList)
 	{
 		//先頭イテレータの指す位置に挿入
-		DoubleLinkedList<ScoreData> list1;
-		auto head = list1.Begin();
-		ScoreData data1(10, "element0");
-		EXPECT_TRUE(list1.Insert(head, data1));
+		{
+			DoubleLinkedList<ScoreData> list;
+			auto head = list.Begin();
+			ScoreData data(10, "element0");
+			EXPECT_TRUE(list.Insert(head, data));
+
+			//期待される値がリストに入ったかを確認
+			ScoreData datas[] =
+			{
+				data,
+			};
+			EXPECT_TRUE(CheckListValue(datas, 1, list));
+		}
 
 		//末尾イテレータの指す位置に挿入
-		DoubleLinkedList<ScoreData> list2;
-		auto end = list2.End();
-		ScoreData data2(11, "element1");
-		EXPECT_TRUE(list2.Insert(end, data2));
+		{
+			DoubleLinkedList<ScoreData> list;
+			auto end = list.End();
+			ScoreData data(11, "element1");
+			EXPECT_TRUE(list.Insert(end, data));
+
+			//期待される値がリストに入ったかを確認
+			ScoreData datas[] =
+			{
+				data,
+			};
+			EXPECT_TRUE(CheckListValue(datas, 1, list));
+		}
 	}
 
 	/*********************************************************
@@ -218,6 +228,15 @@ namespace ex01_DoubleLinkedList
 		++iter;
 		EXPECT_EQ(headData.score, (*iter).score);
 		EXPECT_EQ(headData.name, (*iter).name);
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			newData,
+			{10,"head"},
+			{11,"tail"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 3, list));
 	}
 
 	/*********************************************************
@@ -237,6 +256,15 @@ namespace ex01_DoubleLinkedList
 		auto end = list.End();
 		ScoreData data(20, "newElement");
 		EXPECT_TRUE(list.Insert(end, data));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{10,"head"},
+			{11,"tail"},
+			data,
+		};
+		EXPECT_TRUE(CheckListValue(datas, 3, list));
 	}
 
 	/*********************************************************
@@ -257,6 +285,15 @@ namespace ex01_DoubleLinkedList
 		++iter;//中央へ移動
 		ScoreData data(20, "newElement");
 		EXPECT_TRUE(list.Insert(iter, data));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{10,"head"},
+			data,
+			{11,"tail"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 3, list));
 	}
 
 	/*********************************************************
@@ -291,6 +328,16 @@ namespace ex01_DoubleLinkedList
 		ScoreData newData2(22, "newElement2");
 		EXPECT_TRUE(list.Insert(constEnd, newData2));
 
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			newData0,
+			newData1,
+			{10,"head"},
+			{11,"tail"},
+			newData2,
+		};
+		EXPECT_TRUE(CheckListValue(datas, 5, list));
 	}
 
 	/*********************************************************
@@ -301,8 +348,7 @@ namespace ex01_DoubleLinkedList
 	*				別リストの要素を指すイテレータを渡したりして、挿入します。
 	*				イテレータの指す位置に要素が挿入されその位置にあった要素が後ろにずれます。
 	*				データの挿入関数の戻り値を確認します。
-	*				戻り値がtrueの場合成功です。
-	*
+	*				戻り値がfalseの場合成功です。
 	********************************************************/
 	TEST(ListInsertTest, WhenNotEmptyList_InsertWrongIterator)
 	{
@@ -310,7 +356,6 @@ namespace ex01_DoubleLinkedList
 		ScoreData data0(10, "element0");
 		auto iter = list.Begin();
 		list.Insert(iter, data0);
-
 
 		//別リストを作成
 		DoubleLinkedList<ScoreData> otherList;
@@ -320,14 +365,21 @@ namespace ex01_DoubleLinkedList
 
 		//リストの参照がないイテレータ
 		DoubleLinkedList<ScoreData>::Iterator noReference;
-		ScoreData newData(20, "newElement");
-		EXPECT_FALSE(list.Insert(noReference, newData));
+		ScoreData newData1(20, "newElement");
+		EXPECT_FALSE(list.Insert(noReference, newData1));
 
 		//別リストの要素を指すイテレータ
 		DoubleLinkedList<ScoreData>::Iterator wrongList = otherList.Begin();
-		EXPECT_FALSE(list.Insert(wrongList, newData));
-	}
+		ScoreData newData2(21, "newElement1");
+		EXPECT_FALSE(list.Insert(wrongList, newData2));
 
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			data0,
+		};
+		EXPECT_TRUE(CheckListValue(datas, 1, list));
+	}
 #pragma endregion
 
 #pragma region ========== データの削除 ==========
@@ -370,6 +422,13 @@ namespace ex01_DoubleLinkedList
 
 		auto head = list.Begin();
 		EXPECT_TRUE(list.Remove(head));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{11,"tail"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 1, list));
 	}
 
 	/*********************************************************
@@ -387,6 +446,14 @@ namespace ex01_DoubleLinkedList
 
 		auto end = list.End();
 		EXPECT_FALSE(list.Remove(end));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{10,"head"},
+			{11,"tail"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 2, list));
 	}
 
 	/*********************************************************
@@ -406,8 +473,14 @@ namespace ex01_DoubleLinkedList
 		auto iter = list.Begin();
 		++iter;
 		auto middle = iter;
-
 		EXPECT_TRUE(list.Remove(middle));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{10,"head"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 1, list));
 	}
 
 	/*********************************************************
@@ -425,6 +498,13 @@ namespace ex01_DoubleLinkedList
 
 		auto constIter = list.CBegin();
 		EXPECT_TRUE(list.Remove(constIter));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{11,"tail"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 1, list));
 	}
 
 	/*********************************************************
@@ -453,7 +533,15 @@ namespace ex01_DoubleLinkedList
 		//別リストの要素を指すイテレータ
 		DoubleLinkedList<ScoreData>::Iterator wrongList = otherList.Begin();
 		EXPECT_FALSE(list.Remove(wrongList));
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			data0,
+		};
+		EXPECT_TRUE(CheckListValue(datas, 1, list));
 	}
+
 
 #pragma endregion
 
@@ -474,6 +562,7 @@ namespace ex01_DoubleLinkedList
 
 		//ダミーであるか
 		EXPECT_DEATH((*list.Begin()), "iterator: is dummy");
+
 #else
 		SUCCEED();
 #endif // _DEBUG
@@ -522,23 +611,31 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListBeginTest_F, AfterInsert)
 	{
-		InputThreeData();
-		ScoreData newData(20, "newData");
+		InputThreeData();//list: head middle tail
 
 		//先頭に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(headIter, newData));
-		EXPECT_EQ("newData", (*list.Begin()).name);
+		{
+			UpdateIterator();
+			ScoreData data0(20, "data0");
+			EXPECT_TRUE(list.Insert(headIter, data0));//list: data0 head middle tail
+			EXPECT_EQ("data0", (*list.Begin()).name);
+		}
 
 		//中央に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(middleIter, newData));
-		EXPECT_EQ("newData", (*list.Begin()).name);
+		{
+			UpdateIterator();
+			ScoreData data1(21, "data1");
+			EXPECT_TRUE(list.Insert(middleIter, data1));//list: data0 data1 head middle tail
+			EXPECT_EQ("data0", (*list.Begin()).name);
+		}
 
 		//末尾に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(endIter, newData));
-		EXPECT_EQ("newData", (*list.Begin()).name);
+		{
+			UpdateIterator();
+			ScoreData data2(22, "data2");
+			EXPECT_TRUE(list.Insert(endIter, data2));//list: data0 data1 head middle tail data2
+			EXPECT_EQ("data0", (*list.Begin()).name);
+		}
 	}
 
 	/*********************************************************
@@ -554,19 +651,25 @@ namespace ex01_DoubleLinkedList
 		InputDatas(4);//list: head middle0 middle1 tail
 
 		//末尾要素を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(tailIter));
-		EXPECT_EQ("head", (*list.Begin()).name);	//list: head middle0 middle1
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(tailIter));
+			EXPECT_EQ("head", (*list.Begin()).name);	//list: head middle0 middle1
+		}
 
 		//中央を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(middleIter));
-		EXPECT_EQ("head", (*list.Begin()).name);	//list: head middle1
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(middleIter));
+			EXPECT_EQ("head", (*list.Begin()).name);	//list: head middle1
+		}
 
 		//先頭を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(headIter));
-		EXPECT_EQ("middle1", (*list.Begin()).name);	//list: middle1
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(headIter));
+			EXPECT_EQ("middle1", (*list.Begin()).name);	//list: middle1
+		}
 	}
 
 #pragma endregion
@@ -636,23 +739,31 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListCBeginTest_F, AfterInsert)
 	{
-		InputThreeData();
-		ScoreData newData(20, "newData");
+		InputThreeData();//list: head middle tail
 
 		//先頭に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(headIter, newData));
-		EXPECT_EQ("newData", (*list.CBegin()).name);
+		{
+			UpdateIterator();
+			ScoreData data0(20, "data0");
+			EXPECT_TRUE(list.Insert(headIter, data0));//list: data0 head middle tail
+			EXPECT_EQ("data0", (*list.CBegin()).name);
+		}
 
 		//中央に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(middleIter, newData));
-		EXPECT_EQ("newData", (*list.CBegin()).name);
+		{
+			UpdateIterator();
+			ScoreData data1(21, "data1");
+			EXPECT_TRUE(list.Insert(middleIter, data1));//list: data0 data1 head middle tail
+			EXPECT_EQ("data0", (*list.CBegin()).name);
+		}
 
 		//末尾に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(endIter, newData));
-		EXPECT_EQ("newData", (*list.CBegin()).name);
+		{
+			UpdateIterator();
+			ScoreData data2(22, "data2");
+			EXPECT_TRUE(list.Insert(endIter, data2));//list: data0 data1 head middle tail data2
+			EXPECT_EQ("data0", (*list.CBegin()).name);
+		}
 	}
 
 	/*********************************************************
@@ -668,19 +779,25 @@ namespace ex01_DoubleLinkedList
 		InputDatas(4);//list: head middle0 middle1 tail
 
 		//末尾要素を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(tailIter));
-		EXPECT_EQ("head", (*list.CBegin()).name);//list: head middle0 middle1
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(tailIter));
+			EXPECT_EQ("head", (*list.CBegin()).name);	//list: head middle0 middle1
+		}
 
 		//中央を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(middleIter));
-		EXPECT_EQ("head", (*list.CBegin()).name);//list: head middle1
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(middleIter));
+			EXPECT_EQ("head", (*list.CBegin()).name);	//list: head middle1
+		}
 
 		//先頭を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(headIter));
-		EXPECT_EQ("middle1", (*list.CBegin()).name);//list: middle1
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(headIter));
+			EXPECT_EQ("middle1", (*list.CBegin()).name);	//list: middle1
+		}
 	}
 
 #pragma endregion
@@ -715,17 +832,15 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListEndTest_F, WhenOneElementList)
 	{
-#ifdef _DEBUG
 		//要素が一つあるリストを作成
 		InputOneData();
 
 		//リストに要素が一つであるかをチェック
 		EXPECT_EQ(1, list.Count());
 
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		//ダミーであるか
+		auto iter = list.End();
+		EXPECT_TRUE(IsDummy(iter, { 10,"head" }));
 	}
 
 	/*********************************************************
@@ -736,17 +851,15 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListEndTest_F, WhenManyElementsList)
 	{
-#ifdef _DEBUG
 		//要素が二つ以上あるリストを作成
 		InputThreeData();
 
 		//リストに要素が二つ以上あるかをチェック
 		EXPECT_LE(2, list.Count());
 
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		//ダミーであるか
+		auto iter = list.End();
+		EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
 	}
 
 	/*********************************************************
@@ -758,27 +871,39 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListEndTest_F, AfterInsert)
 	{
-#ifdef _DEBUG
-		InputThreeData();
-		ScoreData newData(20, "newData");
+		InputThreeData();//list: head middle tail
 
 		//先頭に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(headIter, newData));
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
+		{
+			UpdateIterator();
+			ScoreData newData(20, "newData");
+			EXPECT_TRUE(list.Insert(headIter, newData));//list: newData head middle tail
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+		}
 
 		//中央に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(middleIter, newData));
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
+		{
+			UpdateIterator();
+			ScoreData newData(20, "newData");
+			EXPECT_TRUE(list.Insert(middleIter, newData));//list: newData newData head middle tail
+			
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+		}
 
 		//末尾に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(endIter, newData));
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		{
+			UpdateIterator();
+			ScoreData newData(20, "newData");
+			EXPECT_TRUE(list.Insert(endIter, newData));//list: newData newData head middle tail newData
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 20,"newData" }));
+		}
 	}
 
 	/*********************************************************
@@ -790,27 +915,38 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListEndTest_F, AfterRemove)
 	{
-#ifdef _DEBUG
 		//3回削除を行うため、データ4つを用意
-		InputDatas(4);
+		InputDatas(4);//list: head middle0 middle1 tail
 
 		//末尾要素を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(tailIter));
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(tailIter));//list: head middle0 middle1
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+		}
 
 		//中央を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(middleIter));
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(middleIter));//list: head middle1
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+		}
 
 		//先頭を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(headIter));
-		EXPECT_DEATH((*list.End()), "iterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(headIter));//list: middle1
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+		}
 	}
 
 #pragma endregion
@@ -845,17 +981,15 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListCEndTest_F, WhenOneElementList)
 	{
-#ifdef _DEBUG
 		//要素が一つあるリストを作成
 		InputOneData();
 
 		//リストに要素が一つであるかをチェック
 		EXPECT_EQ(1, list.Count());
 
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		//ダミーであるか
+		auto iter = list.CEnd();
+		EXPECT_TRUE(IsDummy(iter, { 10,"head" }));
 	}
 
 	/*********************************************************
@@ -866,17 +1000,15 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListCEndTest_F, WhenManyElementsList)
 	{
-#ifdef _DEBUG
 		//要素が二つ以上あるリストを作成
 		InputThreeData();
 
 		//リストに要素が二つ以上あるかをチェック
 		EXPECT_LE(2, list.Count());
 
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		//ダミーであるか
+		auto iter = list.CEnd();
+		EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
 	}
 
 	/*********************************************************
@@ -888,27 +1020,40 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListCEndTest_F, AfterInsert)
 	{
-#ifdef _DEBUG
-		InputThreeData();
-		ScoreData newData(20, "newData");
+		InputThreeData();//list: head middle tail
 
 		//先頭に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(headIter, newData));
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
+		{
+			UpdateIterator();
+			ScoreData newData(20, "newData");
+			EXPECT_TRUE(list.Insert(headIter, newData));//list: newData head middle tail
+
+			//ダミーであるか
+			auto iter = list.CEnd();
+			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+		}
 
 		//中央に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(middleIter, newData));
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
+		{
+			UpdateIterator();
+			ScoreData newData(20, "newData");
+			EXPECT_TRUE(list.Insert(middleIter, newData));//list: newData newData head middle tail
+
+			//ダミーであるか
+			auto iter = list.CEnd();
+			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+		}
 
 		//末尾に挿入
-		UpdateIterator();
-		EXPECT_TRUE(list.Insert(endIter, newData));
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		{
+			UpdateIterator();
+			ScoreData newData(20, "newData");
+			EXPECT_TRUE(list.Insert(endIter, newData));//list: newData newData head middle tail newData
+
+			//ダミーであるか
+			auto iter = list.CEnd();
+			EXPECT_TRUE(IsDummy(iter, { 20,"newData" }));
+		}
 	}
 
 	/*********************************************************
@@ -920,27 +1065,38 @@ namespace ex01_DoubleLinkedList
 	********************************************************/
 	TEST_F(ListCEndTest_F, AfterRemove)
 	{
-#ifdef _DEBUG
 		//3回削除を行うため、データ4つを用意
 		InputDatas(4);//list: head middle0 middle1 tail
 
 		//末尾要素を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(tailIter));
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(tailIter));//list: head middle0 middle1
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+		}
 
 		//中央を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(middleIter));
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(middleIter));//list: head middle1
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+		}
 
 		//先頭を削除
-		UpdateIterator();
-		EXPECT_TRUE(list.Remove(headIter));
-		EXPECT_DEATH((*list.CEnd()), "constIterator: is dummy");
-#else
-		SUCCEED();
-#endif // _DEBUG
+		{
+			UpdateIterator();
+			EXPECT_TRUE(list.Remove(headIter));//list: middle1
+
+			//ダミーであるか
+			auto iter = list.End();
+			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+		}
 	}
 
 #pragma endregion

@@ -27,9 +27,17 @@ namespace ex02_ConstIterator
 	TEST(IteratorGetDataTest, WhenNoReference)
 	{
 #ifdef _DEBUG
-		DoubleLinkedList<ScoreData>::Iterator iter;//リストの参照がないイテレータを作成
+		//Iterator
+		{
+			DoubleLinkedList<ScoreData>::Iterator iter;//リストの参照がないイテレータを作成
+			EXPECT_DEATH((*iter), "iterator: no reference");
+		}
 
-		EXPECT_DEATH((*iter), "iterator: no reference");
+		//ConstIterator
+		{
+			DoubleLinkedList<ScoreData>::ConstIterator constIter;//リストの参照がないイテレータを作成
+			EXPECT_DEATH((*constIter), "constIterator: no reference");
+		}
 #else
 		SUCCEED();
 #endif
@@ -63,7 +71,16 @@ namespace ex02_ConstIterator
 		EXPECT_NE("head", (*headIter).name);
 		EXPECT_EQ(20, (*headIter).score);
 		EXPECT_EQ("headChange", (*headIter).name);
+
+		//期待される値がリストに入ったかを確認
+		ScoreData datas[] =
+		{
+			{20,"headChange"},
+		};
+		EXPECT_TRUE(CheckListValue(datas, 1, list));
 	}
+
+
 
 	/*********************************************************
 	* @brief		リストが空の際の、先頭イテレータに対して呼び出した際の挙動
@@ -77,8 +94,17 @@ namespace ex02_ConstIterator
 		DoubleLinkedList<ScoreData> list;
 		EXPECT_EQ(0, list.Count());//リストが空であるかをチェック
 
-		auto iter = list.Begin();
-		EXPECT_DEATH((*iter), "iterator: is dummy");
+		//Iterator
+		{
+			DoubleLinkedList<ScoreData>::Iterator iter = list.Begin();
+			EXPECT_DEATH((*iter), "iterator: is dummy");
+		}
+
+		//ConstIterator
+		{
+			DoubleLinkedList<ScoreData>::ConstIterator constIter = list.CBegin();
+			EXPECT_DEATH((*constIter), "constIterator: is dummy");
+		}
 #else
 		SUCCEED();
 #endif // _DEBUG
@@ -94,8 +120,18 @@ namespace ex02_ConstIterator
 	{
 #ifdef _DEBUG
 		DoubleLinkedList<ScoreData> list;
-		auto iter = list.End();
-		EXPECT_DEATH((*iter), "iterator: is dummy");
+
+		//Iterator
+		{
+			DoubleLinkedList<ScoreData>::Iterator iter = list.End();
+			EXPECT_DEATH((*iter), "iterator: is dummy");
+		}
+
+		//ConstIterator
+		{
+			DoubleLinkedList<ScoreData>::ConstIterator constIter = list.CEnd();
+			EXPECT_DEATH((*constIter), "constIterator: is dummy");
+		}
 #else
 		SUCCEED();
 #endif // _DEBUG
@@ -115,8 +151,19 @@ namespace ex02_ConstIterator
 	TEST(IteratorIncrementTest, WhenNoReference)
 	{
 #ifdef _DEBUG
-		DoubleLinkedList<ScoreData>::Iterator iter;
-		EXPECT_DEATH((++iter), "pre increment: no reference");
+
+		//Iterator
+		{
+			DoubleLinkedList<ScoreData>::Iterator iter;
+			EXPECT_DEATH((++iter), "pre increment: no reference");
+		}
+
+		//ConstIterator
+		{
+			DoubleLinkedList<ScoreData>::ConstIterator constIter;
+			EXPECT_DEATH((++constIter), "pre increment: no reference");
+		}
+
 #else
 		SUCCEED();
 #endif // _DEBUG
@@ -132,8 +179,18 @@ namespace ex02_ConstIterator
 	{
 #ifdef _DEBUG
 		DoubleLinkedList<ScoreData> list;//空リストを作成
-		auto iter = list.Begin();
-		EXPECT_DEATH((++iter), "pre increment: dummy cant increment");
+
+		//Iterator
+		{
+			auto iter = list.Begin();
+			EXPECT_DEATH((++iter), "pre increment: dummy cant increment");
+		}
+
+		//ConstIterator
+		{
+			auto constIter = list.CBegin();
+			EXPECT_DEATH((++constIter), "pre increment: dummy cant increment");
+		}
 #else
 		SUCCEED();
 #endif // DEBUG
@@ -149,8 +206,18 @@ namespace ex02_ConstIterator
 	{
 #ifdef _DEBUG
 		DoubleLinkedList<ScoreData> list;
-		auto iter = list.End();
-		EXPECT_DEATH((++iter), "pre increment: dummy cant increment");
+
+		//Iterator
+		{
+			auto iter = list.End();
+			EXPECT_DEATH((++iter), "pre increment: dummy cant increment");
+		}
+
+		//ConstIterator
+		{
+			auto constIter = list.CEnd();
+			EXPECT_DEATH((++constIter), "pre increment: dummy cant increment");
+		}
 #else
 		SUCCEED();
 #endif // DEBUG
@@ -164,20 +231,41 @@ namespace ex02_ConstIterator
 	********************************************************/
 	TEST_F(IteratorIncrementTest_F, WhenManyElements)
 	{
-		//二つ以上の要素があるリストを作成
-		InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+		//Iterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
 
-		//リストの先頭から末尾まで呼び出しを行い、
-		//期待されている要素が格納されているかを確認
-		auto iter = list.Begin();
-		EXPECT_EQ(10, (*iter).score);
-		EXPECT_EQ("head", (*iter).name);
-		++iter;
-		EXPECT_EQ(11, (*iter).score);
-		EXPECT_EQ("middle", (*iter).name);
-		++iter;
-		EXPECT_EQ(12, (*iter).score);
-		EXPECT_EQ("tail", (*iter).name);
+			//リストの先頭から末尾まで呼び出しを行い、
+			//期待されている要素が格納されているかを確認
+			auto iter = list.Begin();
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+			++iter;
+			EXPECT_EQ(11, (*iter).score);
+			EXPECT_EQ("middle", (*iter).name);
+			++iter;
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
+		}
+
+		//ConstIterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+
+			//リストの先頭から末尾まで呼び出しを行い、
+			//期待されている要素が格納されているかを確認
+			auto iter = list.CBegin();
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+			++iter;
+			EXPECT_EQ(11, (*iter).score);
+			EXPECT_EQ("middle", (*iter).name);
+			++iter;
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
+		}
 	}
 
 	/*********************************************************
@@ -190,16 +278,32 @@ namespace ex02_ConstIterator
 	{
 		//二つ以上の要素があるリストを作成
 		InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
-		auto iter = list.Begin();
 
-		//指している要素はhead、次はmiddleのはず
-		EXPECT_EQ(10, (*iter).score);
-		EXPECT_EQ("head", (*iter).name);
+		//Iterator
+		{
+			auto iter = list.Begin();
 
-		//移動した後、middleであるかを確認
-		++iter;
-		EXPECT_EQ(11, (*iter).score);
-		EXPECT_EQ("middle", (*iter).name);
+			//指している要素はhead、次はmiddleのはず
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+
+			//前置インクリメントの後
+			EXPECT_EQ(11, (*(++iter)).score);
+			EXPECT_EQ("tail", (*++iter).name);
+		}
+
+		//ConstIterator
+		{
+			auto iter = list.CBegin();
+
+			//指している要素はhead、次はmiddleのはず
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+
+			//前置インクリメントの後
+			EXPECT_EQ(11, (*(++iter)).score);
+			EXPECT_EQ("tail", (*++iter).name);
+		}
 	}
 
 	/*********************************************************
@@ -212,16 +316,32 @@ namespace ex02_ConstIterator
 	{
 		//二つ以上の要素があるリストを作成
 		InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
-		auto iter = list.Begin();
 
-		//指している要素はhead、次はmiddleのはず
-		EXPECT_EQ(10, (*iter).score);
-		EXPECT_EQ("head", (*iter).name);
+		//Iterator
+		{
+			auto iter = list.Begin();
 
-		//移動した後、middleであるかを確認
-		iter++;
-		EXPECT_EQ(11, (*iter).score);
-		EXPECT_EQ("middle", (*iter).name);
+			//指している要素はhead、次はmiddleのはず
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+
+			//後置インクリメントの後
+			EXPECT_EQ(10, (*(iter++)).score);
+			EXPECT_EQ("middle", (*(iter++)).name);
+		}
+
+		//ConstIterator
+		{
+			auto iter = list.CBegin();
+
+			//指している要素はhead、次はmiddleのはず
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+
+			//後置インクリメントの後
+			EXPECT_EQ(10, (*(iter++)).score);
+			EXPECT_EQ("middle", (*(iter++)).name);
+		}
 	}
 #pragma endregion
 
@@ -238,8 +358,17 @@ namespace ex02_ConstIterator
 	TEST(IteratorDecrementTest, WhenNoReference)
 	{
 #ifdef _DEBUG
-		DoubleLinkedList<ScoreData>::Iterator iter;
-		EXPECT_DEATH((--iter), "pre decrement: no reference");
+		//Iterator
+		{
+			DoubleLinkedList<ScoreData>::Iterator iter;
+			EXPECT_DEATH((--iter), "pre decrement: no reference");
+		}
+
+		//ConstIterator
+		{
+			DoubleLinkedList<ScoreData>::ConstIterator iter;
+			EXPECT_DEATH((--iter), "pre decrement: no reference");
+		}
 #else
 		SUCCEED();
 #endif // DEBUG
@@ -255,8 +384,18 @@ namespace ex02_ConstIterator
 	{
 #ifdef _DEBUG
 		DoubleLinkedList<ScoreData> list;//空であるリストを作成
-		auto iter = list.End();
-		EXPECT_DEATH((--iter), "pre decrement: list is empty");
+
+		//Iterator
+		{
+			auto iter = list.End();
+			EXPECT_DEATH((--iter), "pre decrement: list is empty");
+		}
+
+		//ConstIterator
+		{
+			auto iter = list.CEnd();
+			EXPECT_DEATH((--iter), "pre decrement: list is empty");
+		}
 #else
 		SUCCEED();
 #endif // DEBUG
@@ -274,10 +413,22 @@ namespace ex02_ConstIterator
 		//要素のあるリストを作成
 		InputOneData();
 
-		//ダミーではない先頭イテレータを取得
-		auto iter = list.Begin();
+		//Iterator
+		{
+			//ダミーではない先頭イテレータを取得
+			auto iter = list.Begin();
 
-		EXPECT_DEATH((--iter), "pre decrement: begin cant decrement");
+			EXPECT_DEATH((--iter), "pre decrement: begin cant decrement");
+		}
+
+		//ConstIterator
+		{
+			//ダミーではない先頭イテレータを取得
+			auto iter = list.CBegin();
+
+			EXPECT_DEATH((--iter), "pre decrement: begin cant decrement");
+		}
+
 #else
 		SUCCEED();
 #endif // DEBUG
@@ -291,21 +442,43 @@ namespace ex02_ConstIterator
 	********************************************************/
 	TEST_F(IteratorDecrementTest_F, WhenManyElements)
 	{
-		//二つ以上の要素があるリストを作成
-		InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+		//Iterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
 
-		//リストの末尾から先頭まで呼び出しを行い、
-		//期待されている要素が格納されているかを確認
-		auto iter = list.End();
-		--iter;//最後の要素から
-		EXPECT_EQ(12, (*iter).score);
-		EXPECT_EQ("tail", (*iter).name);
-		--iter;
-		EXPECT_EQ(11, (*iter).score);
-		EXPECT_EQ("middle", (*iter).name);
-		--iter;
-		EXPECT_EQ(10, (*iter).score);
-		EXPECT_EQ("head", (*iter).name);
+			//リストの末尾から先頭まで呼び出しを行い、
+			//期待されている要素が格納されているかを確認
+			auto iter = list.End();
+			--iter;//最後の要素から
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
+			--iter;
+			EXPECT_EQ(11, (*iter).score);
+			EXPECT_EQ("middle", (*iter).name);
+			--iter;
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+		}
+
+		//ConstIterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+
+			//リストの末尾から先頭まで呼び出しを行い、
+			//期待されている要素が格納されているかを確認
+			auto iter = list.CEnd();
+			--iter;//最後の要素から
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
+			--iter;
+			EXPECT_EQ(11, (*iter).score);
+			EXPECT_EQ("middle", (*iter).name);
+			--iter;
+			EXPECT_EQ(10, (*iter).score);
+			EXPECT_EQ("head", (*iter).name);
+		}
 	}
 
 	/*********************************************************
@@ -316,19 +489,37 @@ namespace ex02_ConstIterator
 	********************************************************/
 	TEST_F(IteratorDecrementTest_F, PreDecrement)
 	{
-		//二つ以上の要素があるリストを作成
-		InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
-		auto iter = list.End();
-		--iter;//最後の要素から
+		//Iterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+			auto iter = list.End();
+			--iter;//最後の要素から
 
-		//指している要素はtail、前はmiddleのはず
-		EXPECT_EQ(12, (*iter).score);
-		EXPECT_EQ("tail", (*iter).name);
+			//指している要素はtail、前はmiddleのはず
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
 
-		//移動した後、middleであるかを確認
-		--iter;
-		EXPECT_EQ(11, (*iter).score);
-		EXPECT_EQ("middle", (*iter).name);
+			//前置デクリメントの後
+			EXPECT_EQ(11, (*(--iter)).score);
+			EXPECT_EQ("head", (*(--iter)).name);
+		}
+
+		//ConstIterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+			auto iter = list.CEnd();
+			--iter;//最後の要素から
+
+			//指している要素はtail、前はmiddleのはず
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
+
+			//前置デクリメントの後
+			EXPECT_EQ(11, (*(--iter)).score);
+			EXPECT_EQ("head", (*(--iter)).name);
+		}
 	}
 
 	/*********************************************************
@@ -339,19 +530,37 @@ namespace ex02_ConstIterator
 	********************************************************/
 	TEST_F(IteratorDecrementTest_F, PostDecrement)
 	{
-		//二つ以上の要素があるリストを作成
-		InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
-		auto iter = list.End();
-		iter--;//最後の要素から
+		//Iterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+			auto iter = list.End();
+			iter--;//最後の要素から
 
-		//指している要素はtail、前はmiddleのはず
-		EXPECT_EQ(12, (*iter).score);
-		EXPECT_EQ("tail", (*iter).name);
+			//指している要素はtail、前はmiddleのはず
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
 
-		//移動した後、middleであるかを確認
-		iter--;
-		EXPECT_EQ(11, (*iter).score);
-		EXPECT_EQ("middle", (*iter).name);
+			//後置デクリメントの後
+			EXPECT_EQ(12, (*(iter--)).score);
+			EXPECT_EQ("middle", (*(iter--)).name);
+		}
+
+		//ConstIterator
+		{
+			//二つ以上の要素があるリストを作成
+			InputThreeData();//list: {10,"head"} {11,"middle"} {12,"tail"}
+			auto iter = list.CEnd();
+			iter--;//最後の要素から
+
+			//指している要素はtail、前はmiddleのはず
+			EXPECT_EQ(12, (*iter).score);
+			EXPECT_EQ("tail", (*iter).name);
+
+			//後置デクリメントの後
+			EXPECT_EQ(12, (*(iter--)).score);
+			EXPECT_EQ("middle", (*(iter--)).name);
+		}
 	}
 #pragma endregion
 
@@ -368,16 +577,33 @@ namespace ex02_ConstIterator
 	{
 		InputOneData();//list: {10,"head"}
 
-		//コピーコンストラクト
-		auto iter(list.Begin());
+		//Iterator
+		{
+			//コピーコンストラクト
+			auto iter(list.Begin());
 
-		//コピーとコピー元の値を比較
-		EXPECT_EQ(
-			(*list.Begin()).score,
-			(*iter).score);
-		EXPECT_EQ(
-			(*list.Begin()).name,
-			(*iter).name);
+			//コピーとコピー元の値を比較
+			EXPECT_EQ(
+				(*list.Begin()).score,
+				(*iter).score);
+			EXPECT_EQ(
+				(*list.Begin()).name,
+				(*iter).name);
+		}
+
+		//ConstIterator
+		{
+			//コピーコンストラクト
+			auto iter(list.CBegin());
+
+			//コピーとコピー元の値を比較
+			EXPECT_EQ(
+				(*list.CBegin()).score,
+				(*iter).score);
+			EXPECT_EQ(
+				(*list.CBegin()).name,
+				(*iter).name);
+		}
 	}
 #pragma endregion
 
@@ -394,16 +620,35 @@ namespace ex02_ConstIterator
 	{
 		InputOneData();//list: {10,"head"}
 
-		//代入
-		auto iter = list.Begin();
+		//Iterator
+		{
+			//代入
+			DoubleLinkedList<ScoreData>::Iterator iter;
+			iter = list.Begin();
 
-		//代入後の値とコピー元の値を比較
-		EXPECT_EQ(
-			(*list.Begin()).score,
-			(*iter).score);
-		EXPECT_EQ(
-			(*list.Begin()).name,
-			(*iter).name);
+			//代入後の値とコピー元の値を比較
+			EXPECT_EQ(
+				(*list.Begin()).score,
+				(*iter).score);
+			EXPECT_EQ(
+				(*list.Begin()).name,
+				(*iter).name);
+		}
+
+		//ConstIterator
+		{
+			//代入
+			DoubleLinkedList<ScoreData>::ConstIterator iter;
+			iter = list.CBegin();
+
+			//代入後の値とコピー元の値を比較
+			EXPECT_EQ(
+				(*list.CBegin()).score,
+				(*iter).score);
+			EXPECT_EQ(
+				(*list.CBegin()).name,
+				(*iter).name);
+		}
 	}
 #pragma endregion
 
@@ -421,11 +666,23 @@ namespace ex02_ConstIterator
 	{
 		DoubleLinkedList<ScoreData> list;
 
-		//リストが空の状態で、先頭も末尾もダミーである
-		auto begin = list.Begin();
-		auto end = list.End();
+		//Iterator
+		{
+			//リストが空の状態で、先頭も末尾もダミーである
+			auto begin = list.Begin();
+			auto end = list.End();
 
-		EXPECT_TRUE(begin == end);
+			EXPECT_TRUE(begin == end);
+		}
+
+		//ConstIterator
+		{
+			//リストが空の状態で、先頭も末尾もダミーである
+			auto begin = list.CBegin();
+			auto end = list.CEnd();
+
+			EXPECT_TRUE(begin == end);
+		}
 	}
 
 	/*********************************************************
@@ -438,11 +695,23 @@ namespace ex02_ConstIterator
 	{
 		InputOneData();
 
-		//同じ要素を指す二つのイテレータを作成
-		auto iter1 = list.Begin();
-		auto iter2 = list.Begin();
+		//Iterator
+		{
+			//同じ要素を指す二つのイテレータを作成
+			auto iter1 = list.Begin();
+			auto iter2 = list.Begin();
 
-		EXPECT_TRUE(iter1 == iter2);
+			EXPECT_TRUE(iter1 == iter2);
+		}
+
+		//ConstIterator
+		{
+			//同じ要素を指す二つのイテレータを作成
+			auto iter1 = list.CBegin();
+			auto iter2 = list.CBegin();
+
+			EXPECT_TRUE(iter1 == iter2);
+		}
 	}
 
 	/*********************************************************
@@ -455,11 +724,23 @@ namespace ex02_ConstIterator
 	{
 		InputTwoData();
 
-		//異なる要素を指す二つのイテレータを作成
-		auto iter1 = headIter;
-		auto iter2 = middleIter;
+		//Iterator
+		{
+			//異なる要素を指す二つのイテレータを作成
+			auto iter1 = headIter;
+			auto iter2 = middleIter;
 
-		EXPECT_FALSE(iter1 == iter2);
+			EXPECT_FALSE(iter1 == iter2);
+		}
+
+		//ConstIterator
+		{
+			//異なる要素を指す二つのイテレータを作成
+			auto iter1 = list.CBegin();
+			auto iter2 = list.CEnd();
+
+			EXPECT_FALSE(iter1 == iter2);
+		}
 	}
 #pragma endregion
 
@@ -477,11 +758,23 @@ namespace ex02_ConstIterator
 	{
 		DoubleLinkedList<ScoreData> list;
 
-		//リストが空の状態で、先頭も末尾もダミーである
-		auto begin = list.Begin();
-		auto end = list.End();
+		//Iterator
+		{
+			//リストが空の状態で、先頭も末尾もダミーである
+			auto begin = list.Begin();
+			auto end = list.End();
 
-		EXPECT_FALSE(begin != end);
+			EXPECT_FALSE(begin != end);
+		}
+
+		//ConstIterator
+		{
+			//リストが空の状態で、先頭も末尾もダミーである
+			auto begin = list.CBegin();
+			auto end = list.CEnd();
+
+			EXPECT_FALSE(begin != end);
+		}
 	}
 
 	/*********************************************************
@@ -494,11 +787,23 @@ namespace ex02_ConstIterator
 	{
 		InputOneData();
 
-		//同じ要素を指す二つのイテレータを作成
-		auto iter1 = headIter;
-		auto iter2 = headIter;
+		//Iterator
+		{
+			//同じ要素を指す二つのイテレータを作成
+			auto iter1 = headIter;
+			auto iter2 = headIter;
 
-		EXPECT_FALSE(iter1 != iter2);
+			EXPECT_FALSE(iter1 != iter2);
+		}
+
+		//ConstIterator
+		{
+			//同じ要素を指す二つのイテレータを作成
+			auto iter1 = list.CBegin();
+			auto iter2 = list.CBegin();
+
+			EXPECT_FALSE(iter1 != iter2);
+		}
 	}
 
 	/*********************************************************
@@ -511,11 +816,23 @@ namespace ex02_ConstIterator
 	{
 		InputTwoData();
 
-		//異なる要素を指す二つのイテレータを作成
-		auto iter1 = headIter;
-		auto iter2 = middleIter;
+		//Iterator
+		{
+			//異なる要素を指す二つのイテレータを作成
+			auto iter1 = headIter;
+			auto iter2 = middleIter;
 
-		EXPECT_TRUE(iter1 != iter2);
+			EXPECT_TRUE(iter1 != iter2);
+		}
+
+		//ConstIterator
+		{
+			//異なる要素を指す二つのイテレータを作成
+			auto iter1 = list.CBegin();
+			auto iter2 = list.CEnd();
+
+			EXPECT_TRUE(iter1 != iter2);
+		}
 	}
 #pragma endregion
 
