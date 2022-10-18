@@ -211,7 +211,7 @@ protected:
 * @param		count: 値の個数
 * @param		list: 比較するリスト
 ********************************************************/
-inline bool CheckListValue(const ScoreData* datas, const int count, const DoubleLinkedList<ScoreData>& list)
+inline void CheckListValue(const ScoreData* datas, const int count, const DoubleLinkedList<ScoreData>& list)
 {
 	auto iter = list.CBegin();
 
@@ -219,25 +219,22 @@ inline bool CheckListValue(const ScoreData* datas, const int count, const Double
 	{
 		for (int i = 0; i < count; i++, iter++)
 		{
-			if (datas[i].name != (*iter).name ||
-				datas[i].score != (*iter).score)
-			{
-				return false;
-			}
+			EXPECT_EQ(datas[i].name, (*iter).name);
+			EXPECT_EQ(datas[i].score, (*iter).score);
 		}
 	}
-
-	return true;
 }
 
 /*********************************************************
 * @brief		末尾イテレータであるかを確認
-* @details		一つ前の要素が末尾要素であることを確認する
+* @details		一つ前の要素が末尾要素である場合、
+*				末尾イテレータであることが確認できる。
 * @param		iter: 判断したいイテレータ
 * @param		tail: 末尾要素のデータ
 ********************************************************/
-inline bool IsDummy(DoubleLinkedList<ScoreData>::ConstIterator iter, const ScoreData& tail)
+inline void IsEndIterator(DoubleLinkedList<ScoreData>::ConstIterator iter, const ScoreData& tail)
 {
 	iter--;
-	return (tail.name == (*iter).name && tail.score == (*iter).score);
+	EXPECT_EQ(tail.name ,(*iter).name);
+	EXPECT_EQ(tail.score, (*iter).score);
 }

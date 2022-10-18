@@ -77,7 +77,7 @@ namespace ex02_ConstIterator
 		{
 			{20,"headChange"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 1, list));
+		CheckListValue(datas, 1, list);
 	}
 
 

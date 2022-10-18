@@ -185,7 +185,7 @@ namespace ex01_DoubleLinkedList
 			{
 				data,
 			};
-			EXPECT_TRUE(CheckListValue(datas, 1, list));
+			CheckListValue(datas, 1, list);
 		}
 
 		//末尾イテレータの指す位置に挿入
@@ -200,7 +200,7 @@ namespace ex01_DoubleLinkedList
 			{
 				data,
 			};
-			EXPECT_TRUE(CheckListValue(datas, 1, list));
+			CheckListValue(datas, 1, list);
 		}
 	}
 
@@ -236,7 +236,7 @@ namespace ex01_DoubleLinkedList
 			{10,"head"},
 			{11,"tail"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 3, list));
+		CheckListValue(datas, 3, list);
 	}
 
 	/*********************************************************
@@ -264,7 +264,7 @@ namespace ex01_DoubleLinkedList
 			{11,"tail"},
 			data,
 		};
-		EXPECT_TRUE(CheckListValue(datas, 3, list));
+		CheckListValue(datas, 3, list);
 	}
 
 	/*********************************************************
@@ -293,7 +293,7 @@ namespace ex01_DoubleLinkedList
 			data,
 			{11,"tail"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 3, list));
+		CheckListValue(datas, 3, list);
 	}
 
 	/*********************************************************
@@ -337,7 +337,7 @@ namespace ex01_DoubleLinkedList
 			{11,"tail"},
 			newData2,
 		};
-		EXPECT_TRUE(CheckListValue(datas, 5, list));
+		CheckListValue(datas, 5, list);
 	}
 
 	/*********************************************************
@@ -378,7 +378,7 @@ namespace ex01_DoubleLinkedList
 		{
 			data0,
 		};
-		EXPECT_TRUE(CheckListValue(datas, 1, list));
+		CheckListValue(datas, 1, list);
 	}
 #pragma endregion
 
@@ -428,7 +428,7 @@ namespace ex01_DoubleLinkedList
 		{
 			{11,"tail"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 1, list));
+		CheckListValue(datas, 1, list);
 	}
 
 	/*********************************************************
@@ -453,7 +453,7 @@ namespace ex01_DoubleLinkedList
 			{10,"head"},
 			{11,"tail"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 2, list));
+		CheckListValue(datas, 2, list);
 	}
 
 	/*********************************************************
@@ -480,7 +480,7 @@ namespace ex01_DoubleLinkedList
 		{
 			{10,"head"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 1, list));
+		CheckListValue(datas, 1, list);
 	}
 
 	/*********************************************************
@@ -504,7 +504,7 @@ namespace ex01_DoubleLinkedList
 		{
 			{11,"tail"},
 		};
-		EXPECT_TRUE(CheckListValue(datas, 1, list));
+		CheckListValue(datas, 1, list);
 	}
 
 	/*********************************************************
@@ -539,7 +539,7 @@ namespace ex01_DoubleLinkedList
 		{
 			data0,
 		};
-		EXPECT_TRUE(CheckListValue(datas, 1, list));
+		CheckListValue(datas, 1, list);
 	}
 
 
@@ -840,7 +840,7 @@ namespace ex01_DoubleLinkedList
 
 		//ダミーであるか
 		auto iter = list.End();
-		EXPECT_TRUE(IsDummy(iter, { 10,"head" }));
+		IsEndIterator(iter, { 10,"head" });
 	}
 
 	/*********************************************************
@@ -859,7 +859,7 @@ namespace ex01_DoubleLinkedList
 
 		//ダミーであるか
 		auto iter = list.End();
-		EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+		IsEndIterator(iter, { 12,"tail" });
 	}
 
 	/*********************************************************
@@ -881,7 +881,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+			IsEndIterator(iter, { 12,"tail" });
 		}
 
 		//中央に挿入
@@ -892,7 +892,7 @@ namespace ex01_DoubleLinkedList
 			
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+			IsEndIterator(iter, { 12,"tail" });
 		}
 
 		//末尾に挿入
@@ -902,7 +902,7 @@ namespace ex01_DoubleLinkedList
 			EXPECT_TRUE(list.Insert(endIter, newData));//list: newData newData head middle tail newData
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 20,"newData" }));
+			IsEndIterator(iter, { 20,"newData" });
 		}
 	}
 
@@ -925,7 +925,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+			IsEndIterator(iter, { 12,"middle1" });
 		}
 
 		//中央を削除
@@ -935,17 +935,17 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+			IsEndIterator(iter, { 12,"middle1" });
 		}
 
 		//先頭を削除
 		{
 			UpdateIterator();
-			EXPECT_TRUE(list.Remove(headIter));//list: middle1
+			list.Remove(headIter);//list: middle1
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+			IsEndIterator(iter, { 12,"middle1" });
 		}
 	}
 
@@ -989,7 +989,7 @@ namespace ex01_DoubleLinkedList
 
 		//ダミーであるか
 		auto iter = list.CEnd();
-		EXPECT_TRUE(IsDummy(iter, { 10,"head" }));
+		IsEndIterator(iter, { 10,"head" });
 	}
 
 	/*********************************************************
@@ -1008,7 +1008,7 @@ namespace ex01_DoubleLinkedList
 
 		//ダミーであるか
 		auto iter = list.CEnd();
-		EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+		IsEndIterator(iter, { 12,"tail" });
 	}
 
 	/*********************************************************
@@ -1030,7 +1030,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.CEnd();
-			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+			IsEndIterator(iter, { 12,"tail" });
 		}
 
 		//中央に挿入
@@ -1041,7 +1041,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.CEnd();
-			EXPECT_TRUE(IsDummy(iter, { 12,"tail" }));
+			IsEndIterator(iter, { 12,"tail" });
 		}
 
 		//末尾に挿入
@@ -1052,7 +1052,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.CEnd();
-			EXPECT_TRUE(IsDummy(iter, { 20,"newData" }));
+			IsEndIterator(iter, { 20,"newData" });
 		}
 	}
 
@@ -1075,7 +1075,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+			IsEndIterator(iter, { 12,"middle1" });
 		}
 
 		//中央を削除
@@ -1085,7 +1085,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+			IsEndIterator(iter, { 12,"middle1" });
 		}
 
 		//先頭を削除
@@ -1095,7 +1095,7 @@ namespace ex01_DoubleLinkedList
 
 			//ダミーであるか
 			auto iter = list.End();
-			EXPECT_TRUE(IsDummy(iter, { 12,"middle1" }));
+			IsEndIterator(iter, { 12,"middle1" });
 		}
 	}
 
